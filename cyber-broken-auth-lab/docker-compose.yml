@@ -1,0 +1,50 @@
+version: "3.8"
+services:
+  vulnerable-app:
+    build: ./vulnerable-app
+    ports:
+      - "5001:5000" 
+    depends_on:
+      - mysql
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_NAME=broken_auth
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:5000/health', res=>{process.exit(res.statusCode===200?0:1)}).on('error',()=>process.exit(1))\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: broken_auth
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./db/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    ports:
+      - "3307:3306"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  attacker:
+    build: ./attacker
+    depends_on:
+      - vulnerable-app
+    environment:
+      - TARGET_HOST=http://vulnerable-app:5000
+      - START_ID=1
+      - END_ID=200
+      - TARGET_PATH=/dashboard
+  
+
+volumes:
+  db-data:

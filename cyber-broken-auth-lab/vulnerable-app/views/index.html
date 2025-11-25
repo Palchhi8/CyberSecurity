@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Register — Broken Auth Lab</title>
+</head>
+<body>
+  <h2>Register (Lab — intentionally insecure)</h2>
+  <form action="/register" method="POST">
+    <div><input name="username" placeholder="username" required></div>
+    <div><input name="password" type="password" placeholder="password" required></div>
+    <div><button type="submit">Register</button></div>
+  </form>
+  <p>Already have an account? <a href="/login">Login</a></p>
+</body>
+</html>
