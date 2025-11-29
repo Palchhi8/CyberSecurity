@@ -11,6 +11,7 @@ services:
       - DB_USER=root
       - DB_PASSWORD=password
       - DB_NAME=broken_auth
+      - PUBLIC_URL=http://localhost:5001
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:5000/health', res=>{process.exit(res.statusCode===200?0:1)}).on('error',()=>process.exit(1))\""]

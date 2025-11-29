@@ -113,4 +113,11 @@ app.post("/logout", (req, res) => {
   }
 });
 
-app.listen(PORT, '0.0.0.0', () => console.log(`Vulnerable app running at http://0.0.0.0:${PORT}`));
+const PUBLIC_URL = process.env.PUBLIC_URL || null;
+app.listen(PORT, '0.0.0.0', () => {
+  if (PUBLIC_URL) {
+    console.log(`Vulnerable app running (host): ${PUBLIC_URL}  — inside container: http://0.0.0.0:${PORT}`);
+  } else {
+    console.log(`Vulnerable app running at http://0.0.0.0:${PORT}`);
+  }
+});
